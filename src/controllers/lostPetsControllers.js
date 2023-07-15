@@ -1,6 +1,9 @@
 const LostPet = require("../models/lostPetModel");
 const asynchandler = require("express-async-handler");
-const { cloudinaryUpload } = require("../utils/cloudinaryUpload");
+const {
+	cloudinaryUpload,
+	cloudinaryDestroy,
+} = require("../utils/cloudinaryMethods");
 const fs = require("fs-extra");
 
 const postLostPet = asynchandler(async (req, res) => {
@@ -54,6 +57,8 @@ const delLostPet = asynchandler(async (req, res) => {
 		throw new Error("La mascota no fué encontrada");
 	}
 
+	const deletedImage = await cloudinaryDestroy(lostPet.image.public_id);
+
 	await lostPet.deleteOne();
 
 	res.status(200).json(lostPet);
@@ -78,10 +83,26 @@ const putLostPet = asynchandler(async (req, res) => {
 
 	let infoToUpdate = {
 		name: undefined,
+		image: { public_id: undefined, secure_url: undefined },
 		description: undefined,
 		date_lost: undefined,
 		pet_status: undefined,
 	};
+
+	if (req.files?.image) {
+		const result = await cloudinaryUpload(
+			req.files.image.tempFilePath,
+			"lostPets"
+		);
+		infoToUpdate.image.public_id = result.public_id;
+		infoToUpdate.image.secure_url = result.secure_url;
+
+		const deletedImage = await cloudinaryDestroy(lostPet.image.public_id);
+		await fs.unlink(req.files.image.tempFilePath);
+	} else {
+		infoToUpdate.image.public_id = lostPet.image.public_id;
+		infoToUpdate.image.secure_url = lostPet.image.secure_url;
+	}
 
 	if (name) {
 		infoToUpdate.name = name;

@@ -12,4 +12,8 @@ const cloudinaryUpload = async (filePath, folder) => {
 	return await cloudinary.uploader.upload(filePath, { folder: folder });
 };
 
-module.exports = { cloudinaryUpload };
+const cloudinaryDestroy = async (public_id) => {
+	return await cloudinary.uploader.destroy(public_id);
+};
+
+module.exports = { cloudinaryUpload, cloudinaryDestroy };
