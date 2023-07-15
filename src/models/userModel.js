@@ -15,6 +15,18 @@ const userSchema = mongoose.Schema(
 			type: String,
 			required: [true, "Por favor teclea tu password"],
 		},
+		lostPets: {
+			type: Array,
+			default: [],
+		},
+		ShelteredPets: {
+			type: Array,
+			default: [],
+		},
+		PetsForAdoption: {
+			type: Array,
+			default: [],
+		},
 	},
 	{
 		timestamps: true,
