@@ -12,7 +12,7 @@ const createComment = asyncHandler( async (req,res) => {
     }
 
     const comment = await CommentModel.create({
-        userId: req.user.id,
+        user_id: req.user.id,
         text: text,
         post: postId,
         postType: postType
