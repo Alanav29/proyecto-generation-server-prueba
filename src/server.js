@@ -23,6 +23,7 @@ app.use(
 
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/lostPets", require("./routes/lostPetRoutes"));
+app.use('/api/comments', require('./routes/commentRoutes'))
 
 app.use(errorHandler);
 
