@@ -10,7 +10,7 @@ const shelteredPetSchema = mongoose.Schema(
 			public_id: String,
 			secure_url: String,
 		},
-		user: {
+		user_id: {
 			type: mongoose.Schema.Types.ObjectId,
 			required: [true, "user id missing"],
 			ref: 'User',

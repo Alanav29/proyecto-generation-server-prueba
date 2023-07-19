@@ -7,7 +7,7 @@ const {
 const fs = require("fs-extra");
 
 const postLostPet = asynchandler(async (req, res) => {
-	const { name, owner, description, date_lost } = req.body;
+	const { name, description, date_lost } = req.body;
 
 	if (!req.files?.image) {
 		res.status(400);
@@ -27,7 +27,7 @@ const postLostPet = asynchandler(async (req, res) => {
 	const lostPet = await LostPet.create({
 		name,
 		image: { public_id: result.public_id, secure_url: result.secure_url },
-		owner,
+		user_id: req.user.id,
 		description,
 		date_lost,
 	});

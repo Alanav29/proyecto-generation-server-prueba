@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const commentSchema = mongoose.Schema(
 	{
-        userId:{
+        user_id:{
             type: mongoose.Schema.Types.ObjectId,
             required: true,
             ref: 'User'

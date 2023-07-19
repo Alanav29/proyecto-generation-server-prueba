@@ -1,9 +1,9 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const asynchandler = require("express-async-handler");
+const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 
-const crearUsuario = asynchandler(async (req, res) => {
+const createUser = asyncHandler(async (req, res) => {
 	const { name, email, password } = req.body;
 
 	if (!name || !email || !password) {
@@ -38,7 +38,7 @@ const crearUsuario = asynchandler(async (req, res) => {
 	}
 });
 
-const loginUser = asynchandler(async (req, res) => {
+const loginUser = asyncHandler(async (req, res) => {
 	const { email, password } = req.body;
 
 	const user = await User.findOne({ email });
@@ -48,12 +48,11 @@ const loginUser = asynchandler(async (req, res) => {
 			_id: user.id,
 			name: user.name,
 			email: user.email,
-			likedMovies: user.likedMovies,
 			token: generateToken(user._id),
 		});
 	} else {
 		res.status(400);
-		throw new Error("Credenciales incorrectas");
+		throw new Error("Incorrect name or password");
 	}
 });
 
@@ -63,12 +62,30 @@ const generateToken = (id) => {
 	});
 };
 
-const misDatos = asynchandler(async (req, res) => {
+const userInfo = asyncHandler(async (req, res) => {
 	res.status(200).json(req.user);
 });
 
+const updateUser = asyncHandler( async(req,res)=>{
+	if(!req.user.isAdmin){
+		res.status(401)
+		throw new Error('Unauthorized. User is not admin')
+	}
+
+    const user = await User.findbyId(req.params.id)
+    if (!user) {
+        res.status(400)
+        throw new Error('User not found')
+    }
+
+    const userUpdated = await User.findbyIdAndUpdate(req.params.id, req.body, {new: true})
+    
+    res.status(200).json({userUpdated})
+})
+
 module.exports = {
-	crearUsuario,
+	createUser,
 	loginUser,
-	misDatos,
+	userInfo,
+	updateUser
 };
