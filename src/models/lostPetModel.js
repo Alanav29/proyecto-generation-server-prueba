@@ -11,8 +11,9 @@ const lostPetSchema = mongoose.Schema(
 			secure_url: String,
 		},
 		owner: {
-			type: String,
-			required: [true, "Por favor agrega al dueño de la mascota"],
+			type: mongoose.Schema.Types.ObjectId,
+			required: [true, "user id missing"],
+			ref: 'User',
 		},
 		description: {
 			type: String,
