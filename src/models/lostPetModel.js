@@ -10,9 +10,10 @@ const lostPetSchema = mongoose.Schema(
 			public_id: String,
 			secure_url: String,
 		},
-		owner: {
-			type: String,
-			required: [true, "Por favor agrega al dueño de la mascota"],
+		user: {
+			type: mongoose.Schema.Types.ObjectId,
+			required: [true, "user id missing"],
+			ref: 'User',
 		},
 		description: {
 			type: String,
@@ -25,14 +26,10 @@ const lostPetSchema = mongoose.Schema(
 		pet_status: {
 			type: Boolean,
 			default: false,
-		},
-		comments: {
-			type: Array,
-			default: [],
-		},
+		}
 	},
 	{
-		timestamps: true,
+		timestamps: true
 	}
 );
 
