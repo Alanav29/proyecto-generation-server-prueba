@@ -10,7 +10,7 @@ const lostPetSchema = mongoose.Schema(
 			public_id: String,
 			secure_url: String,
 		},
-		owner: {
+		user: {
 			type: mongoose.Schema.Types.ObjectId,
 			required: [true, "user id missing"],
 			ref: 'User',
@@ -26,14 +26,10 @@ const lostPetSchema = mongoose.Schema(
 		pet_status: {
 			type: Boolean,
 			default: false,
-		},
-		comments: {
-			type: Array,
-			default: [],
-		},
+		}
 	},
 	{
-		timestamps: true,
+		timestamps: true
 	}
 );
 
