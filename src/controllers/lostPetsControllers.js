@@ -7,14 +7,14 @@ const {
 const fs = require("fs-extra");
 
 const postLostPet = asynchandler(async (req, res) => {
-	const { name, description, date_lost } = req.body;
+	const { name, description, date_lost, user_id } = req.body;
 
 	if (!req.files?.image) {
 		res.status(400);
 		throw new Error("Falta imagen");
 	}
 
-	if (!name || !owner || !description || !date_lost) {
+	if (!name || !user_id || !description || !date_lost) {
 		res.status(400);
 		throw new Error("Faltan datos");
 	}
@@ -27,7 +27,7 @@ const postLostPet = asynchandler(async (req, res) => {
 	const lostPet = await LostPet.create({
 		name,
 		image: { public_id: result.public_id, secure_url: result.secure_url },
-		user_id: req.user.id,
+		user_id,
 		description,
 		date_lost,
 	});
@@ -38,7 +38,7 @@ const postLostPet = asynchandler(async (req, res) => {
 		res.status(201).json({
 			_id: lostPet.id,
 			name: lostPet.name,
-			owner: lostPet.owner,
+			user_id: lostPet.user_id,
 		});
 	}
 });
