@@ -14,7 +14,7 @@ const postLostPet = asynchandler(async (req, res) => {
 		throw new Error("Falta imagen");
 	}
 
-	if (!name || !owner || !description || !date_lost) {
+	if (!name || !user_id || !description || !date_lost) {
 		res.status(400);
 		throw new Error("Faltan datos");
 	}
@@ -32,7 +32,7 @@ const postLostPet = asynchandler(async (req, res) => {
 		date_lost,
 	});
 
-	await fs.unlink(req.files.image.tempFilePath);
+	fs.unlink(req.files.image.tempFilePath);
 
 	res.status(201).json({
 		_id: lostPet.id,
@@ -44,7 +44,7 @@ const postLostPet = asynchandler(async (req, res) => {
 const getLostPets = asynchandler(async (req, res) => {
 	const lostPets = await LostPet.find();
 
-	res.status(200).json({ lostPets });
+	res.status(200).json(lostPets);
 });
 
 const delLostPet = asynchandler(async (req, res) => {
