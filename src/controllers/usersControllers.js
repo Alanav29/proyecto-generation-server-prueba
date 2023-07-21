@@ -58,7 +58,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
 const generateToken = (id) => {
 	return jwt.sign({ id }, process.env.JWT_SECRET, {
-		expiresIn: "30d",
+		expiresIn: "2d",
 	});
 };
 
@@ -66,26 +66,28 @@ const userInfo = asyncHandler(async (req, res) => {
 	res.status(200).json(req.user);
 });
 
-const updateUser = asyncHandler( async(req,res)=>{
-	if(!req.user.isAdmin){
-		res.status(401)
-		throw new Error('Unauthorized. User is not admin')
+const updateUser = asyncHandler(async (req, res) => {
+	if (!req.user.isAdmin) {
+		res.status(401);
+		throw new Error("Unauthorized. User is not admin");
 	}
 
-    const user = await User.findbyId(req.params.id)
-    if (!user) {
-        res.status(400)
-        throw new Error('User not found')
-    }
+	const user = await User.findbyId(req.params.id);
+	if (!user) {
+		res.status(400);
+		throw new Error("User not found");
+	}
 
-    const userUpdated = await User.findbyIdAndUpdate(req.params.id, req.body, {new: true})
-    
-    res.status(200).json({userUpdated})
-})
+	const userUpdated = await User.findbyIdAndUpdate(req.params.id, req.body, {
+		new: true,
+	});
+
+	res.status(200).json({ userUpdated });
+});
 
 module.exports = {
 	createUser,
 	loginUser,
 	userInfo,
-	updateUser
+	updateUser,
 };
