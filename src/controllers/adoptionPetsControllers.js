@@ -43,14 +43,10 @@ const putAdoptionPet = asyncHandler(async (req,res) => {
     }
 
     const updatedAdoptionPet = await AdoptionPet.findByIdAndUpdate(req.params.id, req.body, {new: true})
-
     res.status(200).json(updatedAdoptionPet)
-
-    }
-    )
+    })
 
 const delAdoptionPet = asyncHandler(async (req,res) => {
-    console.log(req.params.id)
     const adoptionPet = await AdoptionPet.findById(req.params.id)
     console.log(adoptionPet)
     if (!adoptionPet) {
