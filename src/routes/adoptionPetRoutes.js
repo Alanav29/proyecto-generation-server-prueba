@@ -1,16 +1,18 @@
 const express = require("express")
 const router = express.Router()
 const {
-	createComment,
-	deleteComment,
-	editComment,
-    getPostComments,
+	postAdoptionPet,
+	putAdoptionPet,
+	delAdoptionPet,
+    getAdoptionPets,
+	getAdoptionPet
 } = require("../controllers/adoptionPetsControllers")
 const { protect } = require("../middleware/authMiddleware")
 
-router.post('/', protect, createComment)
-router.put('/:id', protect, editComment)
-router.delete("/:id", protect, deleteComment)
-router.get("/:id", getPostComments)
+router.post('/', protect, postAdoptionPet)
+router.put('/:id', protect, putAdoptionPet)
+router.delete("/:id", protect, delAdoptionPet)
+router.get("/", getAdoptionPets)
+router.get("/:id", getAdoptionPet)
 
 module.exports = router
