@@ -5,7 +5,7 @@ const {
 	deleteComment,
 	editComment,
     getPostComments,
-} = require("../controllers/commentsControllers")
+} = require("../controllers/adoptionPetsControllers")
 const { protect } = require("../middleware/authMiddleware")
 
 router.post('/', protect, createComment)

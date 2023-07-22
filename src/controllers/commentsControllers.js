@@ -18,6 +18,7 @@ const createComment = asyncHandler( async (req,res) => {
         postType: postType
     })
 
+    console.log(`${req.user.name} made a new comment on the following ${postType} post: ${postId}`)
     res.status(200).json({comment})
 
 } )
@@ -43,15 +44,22 @@ const deleteComment = asyncHandler( async(req,res)=> {
     res.status(200).json({id: req.params.id})
 })
 
-const getComments = asyncHandler( async(req,res)=>{
-    const comments = await CommentModel.find().populate('post')
-    res.status(200).json(comments)
+const getPostComments = asyncHandler( async(req,res)=>{
+   
+    const comments = await CommentModel.find()
+    let filteredComments = comments.filter((comment) => {
+        return comment.post.valueOf() === req.params.id
+    })
+    console.log(`Post Id: ${req.params.id}`)
+    console.log(filteredComments)
 
-})
+    res.status(200).json(filteredComments)
+    })
+
 
 module.exports = {
    createComment,
    editComment,
    deleteComment,
-   getComments
+   getPostComments
 }
