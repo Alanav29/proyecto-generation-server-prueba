@@ -18,6 +18,7 @@ const createComment = asyncHandler( async (req,res) => {
         postType: postType
     })
 
+    console.log(`${req.user.name} made a new comment on the following ${postType} post: ${postId}`)
     res.status(200).json({comment})
 
 } )
