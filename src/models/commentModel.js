@@ -14,7 +14,7 @@ const commentSchema = mongoose.Schema(
         post:{
             type: mongoose.Schema.Types.ObjectId,
             required: true,
-            refPath: 'onModel'
+            refPath: 'postType'
         },
         postType:{
             type: String,
