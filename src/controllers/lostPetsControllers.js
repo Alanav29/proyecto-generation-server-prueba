@@ -139,8 +139,8 @@ const putLostPet = asynchandler(async (req, res) => {
 
 module.exports = {
 	postLostPet,
-	getLostPets,
 	putLostPet,
 	delLostPet,
 	getLostPet,
+	getLostPets
 };
