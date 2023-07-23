@@ -4,13 +4,13 @@ const {
 	createComment,
 	deleteComment,
 	editComment,
-    getComments,
+    getPostComments,
 } = require("../controllers/commentsControllers")
 const { protect } = require("../middleware/authMiddleware")
 
 router.post('/', protect, createComment)
 router.put('/:id', protect, editComment)
 router.delete("/:id", protect, deleteComment)
-router.get("/", getComments)
+router.get("/:id", getPostComments)
 
 module.exports = router

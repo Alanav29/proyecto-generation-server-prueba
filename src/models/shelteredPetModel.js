@@ -4,7 +4,7 @@ const shelteredPetSchema = mongoose.Schema(
 	{
 		name: {
 			type: String,
-			required: [true, "Por favor agrega el nombre de la mascota"],
+			default: '',
 		},
 		image: {
 			public_id: String,
@@ -26,6 +26,10 @@ const shelteredPetSchema = mongoose.Schema(
 		pet_status: {
 			type: Boolean,
 			default: false,
+		},
+		state_location: {
+			type: String,
+			required: [true, "Se necesita ingresar un estado de la republica"]
 		}
 	},
 	{
