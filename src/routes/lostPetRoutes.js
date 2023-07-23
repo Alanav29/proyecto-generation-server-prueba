@@ -9,13 +9,12 @@ const {
 	getLostPet,
 } = require("../controllers/lostPetsControllers");
 
-router.route("/")
-	.post(protect, postLostPet)
-	.get(getLostPets);
-	
-router.route("/:id")
+router.route("/").post(protect, postLostPet).get(getLostPets);
+
+router
+	.route("/:id")
 	.put(protect, putLostPet)
 	.delete(protect, delLostPet)
-	.get(protect, getLostPet);
+	.get(getLostPet);
 
 module.exports = router;

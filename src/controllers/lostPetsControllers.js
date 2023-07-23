@@ -32,13 +32,13 @@ const postLostPet = asynchandler(async (req, res) => {
 		date_lost,
 	});
 
-	fs.unlink(req.files.image.tempFilePath);
-
 	res.status(201).json({
 		_id: lostPet.id,
 		name: lostPet.name,
 		user_id: lostPet.user_id,
 	});
+
+	fs.unlink(req.files.image.tempFilePath);
 });
 
 const getLostPets = asynchandler(async (req, res) => {
@@ -55,9 +55,9 @@ const delLostPet = asynchandler(async (req, res) => {
 		throw new Error("La mascota no fué encontrada");
 	}
 
-	const deletedImage = await cloudinaryDestroy(lostPet.image.public_id);
+	const deletedImage = cloudinaryDestroy(lostPet.image.public_id);
 
-	await lostPet.deleteOne();
+	lostPet.deleteOne();
 
 	res.status(200).json(lostPet);
 });
@@ -95,8 +95,8 @@ const putLostPet = asynchandler(async (req, res) => {
 		infoToUpdate.image.public_id = result.public_id;
 		infoToUpdate.image.secure_url = result.secure_url;
 
-		const deletedImage = await cloudinaryDestroy(lostPet.image.public_id);
-		await fs.unlink(req.files.image.tempFilePath);
+		const deletedImage = cloudinaryDestroy(lostPet.image.public_id);
+		fs.unlink(req.files.image.tempFilePath);
 	} else {
 		infoToUpdate.image.public_id = lostPet.image.public_id;
 		infoToUpdate.image.secure_url = lostPet.image.secure_url;
