@@ -95,8 +95,8 @@ const putLostPet = asynchandler(async (req, res) => {
 		infoToUpdate.image.public_id = result.public_id;
 		infoToUpdate.image.secure_url = result.secure_url;
 
-		const deletedImage = await cloudinaryDestroy(lostPet.image.public_id);
-		await fs.unlink(req.files.image.tempFilePath);
+		const deletedImage = cloudinaryDestroy(lostPet.image.public_id);
+		fs.unlink(req.files.image.tempFilePath);
 	} else {
 		infoToUpdate.image.public_id = lostPet.image.public_id;
 		infoToUpdate.image.secure_url = lostPet.image.secure_url;
