@@ -1,5 +1,7 @@
 const CommentModel = require("../models/commentModel");
 const asyncHandler = require("express-async-handler");
+const { connectDB } = require("../config/db");
+const mongoose = require("mongoose");
 
 const createComment = asyncHandler(async (req, res) => {
 	/**postType debe ser un string 'LostPet','ShelteredPet','AdoptionPet' */
@@ -49,14 +51,30 @@ const deleteComment = asyncHandler(async (req, res) => {
 });
 
 const getPostComments = asyncHandler(async (req, res) => {
-	const comments = await CommentModel.find();
-	let filteredComments = comments.filter((comment) => {
-		return comment.post.valueOf() === req.params.id;
-	});
-	console.log(`Post Id: ${req.params.id}`);
-	console.log(filteredComments);
+	const comments = await CommentModel.aggregate([
+		{
+			$lookup: {
+				//name of the collection we want to merge
+				from: "users",
+				//name of the field that is storing the reference
+				localField: "user_id",
+				//in the user model, which field is storing the ObjectId? _id
+				foreignField: "_id",
+				//let's provide an alias.
+				as: "user",
+			},
+		},
+	]);
 
-	res.status(200).json(filteredComments);
+	comments.forEach((comment) => {
+		console.log(comment.user[0].name);
+	});
+
+	/* let filteredComments = comments.filter((comment) => {
+        return comment.post.valueOf() === req.params.id
+    }) */
+
+	res.status(200).json(comments);
 });
 
 module.exports = {
