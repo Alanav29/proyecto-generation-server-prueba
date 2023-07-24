@@ -1,5 +1,12 @@
+<<<<<<< HEAD
 const CommentModel = require("../models/commentModel");
 const asyncHandler = require("express-async-handler");
+=======
+const CommentModel = require('../models/commentModel')
+const asyncHandler = require('express-async-handler')
+const {connectDB} = require('../config/db')
+const mongoose = require('mongoose')
+>>>>>>> 0b253defcec10f0b51d818ae2152b47ef2f0297c
 
 const createComment = asyncHandler(async (req, res) => {
 	/**postType debe ser un string 'LostPet','ShelteredPet','AdoptionPet' */
@@ -48,6 +55,7 @@ const deleteComment = asyncHandler(async (req, res) => {
 	res.status(200).json({ id: req.params.id });
 });
 
+<<<<<<< HEAD
 const getPostComments = asyncHandler(async (req, res) => {
 	const comments = await CommentModel.find();
 	let filteredComments = comments.filter((comment) => {
@@ -55,6 +63,48 @@ const getPostComments = asyncHandler(async (req, res) => {
 	});
 	console.log(`Post Id: ${req.params.id}`);
 	console.log(filteredComments);
+=======
+    const commentUpdated = await CommentModel.findByIdAndUpdate(req.params.id, req.body, {new: true})
+    res.status(200).json(commentUpdated)
+})
+
+const deleteComment = asyncHandler( async(req,res)=> {
+    const comment = await CommentModel.findById(req.params.id)
+    if (!comment){
+        res.status(400)
+        throw new Error('Comment not found')
+    }
+    await comment.deleteOne()
+    res.status(200).json({id: req.params.id})
+})
+
+const getPostComments = asyncHandler( async(req,res)=>{
+
+    const comments = await CommentModel.aggregate([{
+        $lookup: {
+            //name of the collection we want to merge
+            from: "users",
+            //name of the field that is storing the reference
+            localField: "user_id",
+            //in the user model, which field is storing the ObjectId? _id
+            foreignField: "_id",
+            //let's provide an alias. 
+            as: "user"
+        }
+
+}])
+
+    comments.forEach(comment=>{
+        console.log(comment.user[0].name)
+    })
+
+    /* let filteredComments = comments.filter((comment) => {
+        return comment.post.valueOf() === req.params.id
+    }) */
+    
+    res.status(200).json(comments)
+    })
+>>>>>>> 0b253defcec10f0b51d818ae2152b47ef2f0297c
 
 	res.status(200).json(filteredComments);
 });
