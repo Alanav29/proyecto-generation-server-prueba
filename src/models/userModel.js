@@ -17,8 +17,11 @@ const userSchema = mongoose.Schema(
 		},
 		isAdmin: {
 			type: Boolean,
-			default: false
-		}
+			default: false,
+		},
+		lost_pets: { type: Array, default: [] },
+		sheltered_pets: { type: Array, default: [] },
+		adoption_pets: { type: Array, default: [] },
 	},
 	{
 		timestamps: true,

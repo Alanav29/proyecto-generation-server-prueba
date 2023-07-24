@@ -5,6 +5,8 @@ const {
 	cloudinaryDestroy,
 } = require("../utils/cloudinaryMethods");
 const fs = require("fs-extra");
+const User = require("../models/userModel");
+const { ObjectId } = require("mongodb");
 
 const postLostPet = asynchandler(async (req, res) => {
 	const { name, description, date_lost, user_id } = req.body;
@@ -31,6 +33,18 @@ const postLostPet = asynchandler(async (req, res) => {
 		description,
 		date_lost,
 	});
+
+	const user = await User.findById(user_id);
+	let userLostPets = user.lost_pets;
+	userLostPets.push(lostPet.id);
+
+	await User.findByIdAndUpdate(
+		user._id,
+		{
+			lost_pets: userLostPets,
+		},
+		{ new: true }
+	);
 
 	res.status(201).json({
 		_id: lostPet.id,
@@ -142,5 +156,5 @@ module.exports = {
 	putLostPet,
 	delLostPet,
 	getLostPet,
-	getLostPets
+	getLostPets,
 };
