@@ -80,15 +80,12 @@ const getPostComments = asyncHandler( async(req,res)=>{
 
     ])
 
-    comments.forEach(comment=>{
-        console.log(comment.username)
-    })
 
-    /* let filteredComments = comments.filter((comment) => {
+    filteredComments = comments.filter((comment) => {
         return comment.post.valueOf() === req.params.id
-    }) */
+    })
     
-    res.status(200).json(comments)
+    res.status(200).json(filteredComments)
     })
 
 
