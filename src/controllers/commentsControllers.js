@@ -66,15 +66,11 @@ const getPostComments = asyncHandler(async (req, res) => {
 		},
 	]);
 
-	comments.forEach((comment) => {
-		console.log(comment.user[0].name);
+	let filteredComments = comments.filter((comment) => {
+		return comment.post.valueOf() === req.params.id;
 	});
 
-	/* let filteredComments = comments.filter((comment) => {
-        return comment.post.valueOf() === req.params.id
-    }) */
-
-	res.status(200).json(comments);
+	res.status(200).json(filteredComments);
 });
 
 module.exports = {
