@@ -34,18 +34,6 @@ const postLostPet = asynchandler(async (req, res) => {
 		date_lost,
 	});
 
-	const user = await User.findById(user_id);
-	let userLostPets = user.lost_pets;
-	userLostPets.push(lostPet.id);
-
-	await User.findByIdAndUpdate(
-		user._id,
-		{
-			lost_pets: userLostPets,
-		},
-		{ new: true }
-	);
-
 	res.status(201).json({
 		_id: lostPet.id,
 		name: lostPet.name,
@@ -71,21 +59,7 @@ const delLostPet = asynchandler(async (req, res) => {
 
 	const deletedImage = cloudinaryDestroy(lostPet.image.public_id);
 
-	const user = req.user;
-
-	let userLostPetsUpdated = user.lost_pets.filter(
-		(lostPet) => lostPet !== req.params.id
-	);
-
 	await CommentModel.deleteMany({ post: req.params.id });
-
-	await User.findByIdAndUpdate(
-		user._id,
-		{
-			lost_pets: userLostPetsUpdated,
-		},
-		{ new: true }
-	);
 
 	lostPet.deleteOne();
 
