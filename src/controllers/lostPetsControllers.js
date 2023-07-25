@@ -89,7 +89,7 @@ const delLostPet = asynchandler(async (req, res) => {
 
 	lostPet.deleteOne();
 
-	res.status(200).json(lostPet);
+	res.status(200).json({ lostPet });
 });
 
 const getLostPet = asynchandler(async (req, res) => {
