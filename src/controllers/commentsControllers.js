@@ -50,44 +50,43 @@ const deleteComment = asyncHandler(async (req, res) => {
 	res.status(200).json({ id: req.params.id });
 });
 
-const getPostComments = asyncHandler( async(req,res)=>{
+const getPostComments = asyncHandler(async (req, res) => {
+	const comments = await CommentModel.aggregate([
+		{
+			$lookup: {
+				//name of the collection we want to merge
+				from: "users",
+				//name of the field that is storing the reference
+				localField: "user_id",
+				//in the user model, which field is storing the ObjectId? _id
+				foreignField: "_id",
+				//let's provide an alias. By default, it will be an array--> user: []
+				as: "user",
+			},
+		},
+		{
+			// With unwind, the field becomes an object -> user: {}
+			$unwind: "$user",
+		},
+		{
+			//Which fields will be shown for the comment? 1 == true.
+			$project: {
+				username: "$user.name",
+				user_id: 1,
+				text: 1,
+				post: 1,
+				postType: 1,
+				createdAt: 1,
+			},
+		},
+	]);
 
-    const comments = await CommentModel.aggregate([
-        {
-            $lookup: {
-                //name of the collection we want to merge
-                from: "users",
-                //name of the field that is storing the reference
-                localField: "user_id",
-                //in the user model, which field is storing the ObjectId? _id
-                foreignField: "_id",
-                //let's provide an alias. By default, it will be an array--> user: []
-                as: "user"
-            }
-        },
-        { // With unwind, the field becomes an object -> user: {}
-            $unwind: "$user"
-        },
-        { //Which fields will be shown for the comment? 1 == true.
-            $project:{
-                username: "$user.name",
-                text: 1,
-                post: 1,
-                postType: 1,
-                createdAt: 1
-            }
-        }
+	filteredComments = comments.filter((comment) => {
+		return comment.post.valueOf() === req.params.id;
+	});
 
-    ])
-
-
-    filteredComments = comments.filter((comment) => {
-        return comment.post.valueOf() === req.params.id
-    })
-    
-    res.status(200).json(filteredComments)
-    })
-
+	res.status(200).json(filteredComments);
+});
 
 module.exports = {
 	createComment,
