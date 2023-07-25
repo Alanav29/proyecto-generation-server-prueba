@@ -77,6 +77,8 @@ const delLostPet = asynchandler(async (req, res) => {
 		(lostPet) => lostPet !== req.params.id
 	);
 
+	await CommentModel.deleteMany({ post: req.params.id });
+
 	await User.findByIdAndUpdate(
 		user._id,
 		{
