@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
+const LostPet = require("../models/lostPetModel");
 
 const createUser = asyncHandler(async (req, res) => {
 	const { name, email, password } = req.body;
@@ -64,7 +65,23 @@ const generateToken = (id) => {
 };
 
 const userInfo = asyncHandler(async (req, res) => {
-	res.status(200).json(req.user);
+	const userData = await User.aggregate([
+		{ $match: { _id: req.user._id } },
+		{
+			$lookup: {
+				//name of the collection we want to merge(busca en esta coleccion)
+				from: "lostpets",
+				//name of the field that is storing the reference(campo en comment que relaciona las colecciones)
+				localField: "_id",
+				//in the user model, which field is storing the ObjectId? _id(campo en users al que se hace referencia)
+				foreignField: "user_id",
+				//let's provide an alias.(en que campo se guardara)
+				as: "lostPets",
+			},
+		},
+	]);
+
+	res.status(200).json(userData);
 });
 
 const updateUser = asyncHandler(async (req, res) => {
