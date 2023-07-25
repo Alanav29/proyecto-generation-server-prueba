@@ -6,7 +6,7 @@ const {
 } = require("../utils/cloudinaryMethods");
 const fs = require("fs-extra");
 const User = require("../models/userModel");
-const { ObjectId } = require("mongodb");
+const CommentModel = require("../models/commentModel");
 
 const postLostPet = asynchandler(async (req, res) => {
 	const { name, description, date_lost, user_id } = req.body;
@@ -70,6 +70,20 @@ const delLostPet = asynchandler(async (req, res) => {
 	}
 
 	const deletedImage = cloudinaryDestroy(lostPet.image.public_id);
+
+	const user = req.user;
+
+	let userLostPetsUpdated = user.lost_pets.filter(
+		(lostPet) => lostPet !== req.params.id
+	);
+
+	await User.findByIdAndUpdate(
+		user._id,
+		{
+			lost_pets: userLostPetsUpdated,
+		},
+		{ new: true }
+	);
 
 	lostPet.deleteOne();
 
