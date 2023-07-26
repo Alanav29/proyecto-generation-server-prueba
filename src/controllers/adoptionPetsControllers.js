@@ -35,36 +35,61 @@ const postAdoptionPet = asyncHandler(async (req,res) => {
 )
 
 const putAdoptionPet = asyncHandler(async (req,res) => {
-    const adoptionPet = await AdoptionPet.findById(req.params.id)
+    const adoptionPet = await AdoptionPet.findById(req.params.id);
+	const { name, description, pet_status } = req.body;
+	if (!adoptionPet) {
+		res.status(400);
+		throw new Error("La mascota no fué encontrada");
+	}
 
-    if(!adoptionPet) {
-        res.status(400)
-        throw new Error('Pet for adoption not found.')
-    }
+	let infoToUpdate = {
+		name: undefined,
+		image: { public_id: undefined, secure_url: undefined },
+		description: undefined,
+		pet_status: undefined,
+	};
 
-    const updatedAdoptionPet = await AdoptionPet.findByIdAndUpdate(req.params.id, req.body, {new: true})
-    res.status(200).json(updatedAdoptionPet)
-    })
+	if (req.files?.image) {
+		const result = await cloudinaryUpload(
+			req.files.image.tempFilePath,
+			"lostPets"
+		);
+		infoToUpdate.image.public_id = result.public_id;
+		infoToUpdate.image.secure_url = result.secure_url;
 
-const delAdoptionPet = asyncHandler(async (req,res) => {
-    const adoptionPet = await AdoptionPet.findById(req.params.id)
-    console.log(adoptionPet)
-    if (!adoptionPet) {
-        res.status(400)
-        throw new Error('Cannot delete. Post not found.')
-    }
-    
+		const deletedImage = cloudinaryDestroy(adoptionPet.image.public_id);
+		fs.unlink(req.files.image.tempFilePath);
+	} else {
+		infoToUpdate.image.public_id = adoptionPet.image.public_id;
+		infoToUpdate.image.secure_url = adoptionPet.image.secure_url;
+	}
 
-    await cloudinaryDestroy(adoptionPet.image.public_id)
-    await adoptionPet.deleteOne()
+	if (name) {
+		infoToUpdate.name = name;
+	} else {
+		infoToUpdate.name = adoptionPet.name;
+	}
 
-    //Esto es feedback para los desarrolladores
-    res.status(200).json({
-        message: "The post has been succesfully deleted",
-        post_id: adoptionPet.id,
-        pet_name: adoptionPet.name,
-        user_name: req.user.name
-    })
+	if (description) {
+		infoToUpdate.description = description;
+	} else {
+		infoToUpdate.description = adoptionPet.description;
+	}
+
+	if (pet_status) {
+		infoToUpdate.pet_status = pet_status;
+	} else {
+		infoToUpdate.pet_status = adoptionPet.pet_status;
+	}
+
+	const petUpdated = await AdoptionPet.findByIdAndUpdate(
+		req.		infoToUpdate,
+		{
+			new: true,
+		}
+	);
+
+	res.status(200).json(petUpdated);
 })
 
 const getAdoptionPets = asyncHandler(async (req,res) => {
