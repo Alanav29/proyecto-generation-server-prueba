@@ -4,7 +4,7 @@ const shelteredPetSchema = mongoose.Schema(
 	{
 		name: {
 			type: String,
-			default: '',
+			default: "",
 		},
 		image: {
 			public_id: String,
@@ -13,7 +13,7 @@ const shelteredPetSchema = mongoose.Schema(
 		user_id: {
 			type: mongoose.Schema.Types.ObjectId,
 			required: [true, "user id missing"],
-			ref: 'User',
+			ref: "User",
 		},
 		description: {
 			type: String,
@@ -29,8 +29,8 @@ const shelteredPetSchema = mongoose.Schema(
 		},
 		state_location: {
 			type: String,
-			required: [true, "Se necesita ingresar un estado de la republica"]
-		}
+			// required: [true, "Se necesita ingresar un estado de la republica"]
+		},
 	},
 	{
 		timestamps: true,

@@ -14,7 +14,7 @@ const postShelteredPet = asyncHandler(async (req, res) => {
 		throw new Error("Falta imagen");
 	}
 
-	if (!name || !description || !date_found || state_location) {
+	if (!name || !description || !date_found) {
 		res.status(400);
 		throw new Error("Faltan datos");
 	}
@@ -43,9 +43,9 @@ const postShelteredPet = asyncHandler(async (req, res) => {
 	//Esto es feedback para los desarrolladores
 	res.status(201).json({
 		message: "Successfully posted sheltered pet",
-		post_id: shelteredPet.id,
-		pet_name: shelteredPet.name,
-		user_name: req.user.name,
+		_id: shelteredPet.id,
+		name: shelteredPet.name,
+		user_id: req.user._id,
 	});
 });
 
