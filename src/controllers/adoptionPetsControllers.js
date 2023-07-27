@@ -34,6 +34,23 @@ const postAdoptionPet = asyncHandler(async (req,res) => {
 }
 )
 
+const delAdoptionPet = asyncHandler(async (req, res) => {
+	const adoptionPet = await AdoptionPet.findById(req.params.id);
+
+	if (!adoptionPet) {
+		res.status(400);
+		throw new Error("La mascota no fué encontrada");
+	}
+
+	const deletedImage = cloudinaryDestroy(adoptionPet.image.public_id);
+
+	await CommentModel.deleteMany({ post: req.params.id });
+
+	adoptionPet.deleteOne();
+
+	res.status(200).json({ adoptionPet });
+});
+
 const putAdoptionPet = asyncHandler(async (req,res) => {
     const adoptionPet = await AdoptionPet.findById(req.params.id);
 	const { name, description, pet_status } = req.body;
