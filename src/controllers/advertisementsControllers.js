@@ -79,4 +79,5 @@ module.exports = {
 	postAdvertisement,
 	getAdvertisements,
 	delAdvertisement,
+	getAdvertisement,
 };
