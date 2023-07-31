@@ -64,6 +64,12 @@ const generateToken = (id) => {
 };
 
 const userInfo = asyncHandler(async (req, res) => {
+	const user = await User.findOne({ _id: req.user._id });
+	if (!user) {
+		res.status(400);
+		throw new Error("usuario no encontrado");
+	}
+
 	const userData = await User.aggregate([
 		{ $match: { _id: req.user._id } },
 		{
@@ -76,6 +82,30 @@ const userInfo = asyncHandler(async (req, res) => {
 				foreignField: "user_id",
 				//let's provide an alias.(en que campo se guardara)
 				as: "lostPets",
+			},
+		},
+		{
+			$lookup: {
+				//name of the collection we want to merge(busca en esta coleccion)
+				from: "shelteredpets",
+				//name of the field that is storing the reference(campo en comment que relaciona las colecciones)
+				localField: "_id",
+				//in the user model, which field is storing the ObjectId? _id(campo en users al que se hace referencia)
+				foreignField: "user_id",
+				//let's provide an alias.(en que campo se guardara)
+				as: "shelteredPets",
+			},
+		},
+		{
+			$lookup: {
+				//name of the collection we want to merge(busca en esta coleccion)
+				from: "adoptionpets",
+				//name of the field that is storing the reference(campo en comment que relaciona las colecciones)
+				localField: "_id",
+				//in the user model, which field is storing the ObjectId? _id(campo en users al que se hace referencia)
+				foreignField: "user_id",
+				//let's provide an alias.(en que campo se guardara)
+				as: "adoptionPets",
 			},
 		},
 	]);
