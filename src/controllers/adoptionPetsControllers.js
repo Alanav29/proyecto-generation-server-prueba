@@ -6,33 +6,32 @@ const {
 } = require("../utils/cloudinaryMethods");
 const fs = require("fs-extra");
 
-const postAdoptionPet = asyncHandler(async (req,res) => {
-    const { name, description } = req.body
+const postAdoptionPet = asyncHandler(async (req, res) => {
+	const { name, description } = req.body;
 
- //Obtiene public_id y secure_url de cloudinary
-    const {public_id, secure_url} = await cloudinaryUpload(
-        req.files.image.tempFilePath, 'adoptionPets'
-    )
-    
-    const adoptionPet = await AdoptionPet.create({
-        name,
-        description,
-        image: {public_id, secure_url},
-        user_id: req.user.id
-    })
+	//Obtiene public_id y secure_url de cloudinary
+	const { public_id, secure_url } = await cloudinaryUpload(
+		req.files.image.tempFilePath,
+		"adoptionPets"
+	);
 
-    fs.unlink(req.files.image.tempFilePath)
+	const adoptionPet = await AdoptionPet.create({
+		name,
+		description,
+		image: { public_id, secure_url },
+		user_id: req.user.id,
+	});
 
-    //Esto es feedback para los desarrolladores
-    res.status(201).json({
-        message: "Succesfully posted pet for adoption",
-        post_id: adoptionPet.id,
-        pet_name: adoptionPet.name,
-        user_name: req.user.name,
- })
+	fs.unlink(req.files.image.tempFilePath);
 
-}
-)
+	//Esto es feedback para los desarrolladores
+	res.status(201).json({
+		message: "Succesfully posted pet for adoption",
+		_id: adoptionPet.id,
+		pet_name: adoptionPet.name,
+		user_name: req.user.name,
+	});
+});
 
 const delAdoptionPet = asyncHandler(async (req, res) => {
 	const adoptionPet = await AdoptionPet.findById(req.params.id);
@@ -51,8 +50,8 @@ const delAdoptionPet = asyncHandler(async (req, res) => {
 	res.status(200).json({ adoptionPet });
 });
 
-const putAdoptionPet = asyncHandler(async (req,res) => {
-    const adoptionPet = await AdoptionPet.findById(req.params.id);
+const putAdoptionPet = asyncHandler(async (req, res) => {
+	const adoptionPet = await AdoptionPet.findById(req.params.id);
 	const { name, description, pet_status } = req.body;
 	if (!adoptionPet) {
 		res.status(400);
@@ -99,33 +98,30 @@ const putAdoptionPet = asyncHandler(async (req,res) => {
 		infoToUpdate.pet_status = adoptionPet.pet_status;
 	}
 
-	const petUpdated = await AdoptionPet.findByIdAndUpdate(
-		req.		infoToUpdate,
-		{
-			new: true,
-		}
-	);
+	const petUpdated = await AdoptionPet.findByIdAndUpdate(req.infoToUpdate, {
+		new: true,
+	});
 
 	res.status(200).json(petUpdated);
-})
+});
 
-const getAdoptionPets = asyncHandler(async (req,res) => {
-    const adoptionPets = await AdoptionPet.find()
-    if(!adoptionPets){
-        res.status(400)
-        throw new Error("There are no pets for adoption.")
-    }
-    res.status(200).json(adoptionPets)
-})
+const getAdoptionPets = asyncHandler(async (req, res) => {
+	const adoptionPets = await AdoptionPet.find();
+	if (!adoptionPets) {
+		res.status(400);
+		throw new Error("There are no pets for adoption.");
+	}
+	res.status(200).json(adoptionPets);
+});
 
-const getAdoptionPet = asyncHandler(async (req,res) => {
-    const adoptionPet = await AdoptionPet.findById(req.params.id)
-    if (!adoptionPet) {
-        res.status(400)
-        throw new Error("Pet for adoption not found")
-    }
-    res.status(200).json(adoptionPet)
-})
+const getAdoptionPet = asyncHandler(async (req, res) => {
+	const adoptionPet = await AdoptionPet.findById(req.params.id);
+	if (!adoptionPet) {
+		res.status(400);
+		throw new Error("Pet for adoption not found");
+	}
+	res.status(200).json(adoptionPet);
+});
 
 module.exports = {
 	postAdoptionPet,
@@ -133,5 +129,4 @@ module.exports = {
 	putAdoptionPet,
 	delAdoptionPet,
 	getAdoptionPet,
-    getAdoptionPets
 };
