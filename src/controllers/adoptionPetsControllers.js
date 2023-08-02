@@ -5,13 +5,14 @@ const {
 	cloudinaryDestroy,
 } = require("../utils/cloudinaryMethods");
 const fs = require("fs-extra");
+const CommentModel = require("../models/commentModel");
 
 const postAdoptionPet = asyncHandler(async (req, res) => {
-	const { name, description } = req.body;
+	const { name, description, image } = req.body;
 
 	//Obtiene public_id y secure_url de cloudinary
 	const { public_id, secure_url } = await cloudinaryUpload(
-		req.files.image.tempFilePath,
+		image,
 		"adoptionPets"
 	);
 
@@ -21,8 +22,6 @@ const postAdoptionPet = asyncHandler(async (req, res) => {
 		image: { public_id, secure_url },
 		user_id: req.user.id,
 	});
-
-	fs.unlink(req.files.image.tempFilePath);
 
 	//Esto es feedback para los desarrolladores
 	res.status(201).json({
@@ -52,7 +51,7 @@ const delAdoptionPet = asyncHandler(async (req, res) => {
 
 const putAdoptionPet = asyncHandler(async (req, res) => {
 	const adoptionPet = await AdoptionPet.findById(req.params.id);
-	const { name, description, pet_status } = req.body;
+	const { name, description, pet_status, image } = req.body;
 	if (!adoptionPet) {
 		res.status(400);
 		throw new Error("La mascota no fué encontrada");
@@ -65,16 +64,12 @@ const putAdoptionPet = asyncHandler(async (req, res) => {
 		pet_status: undefined,
 	};
 
-	if (req.files?.image) {
-		const result = await cloudinaryUpload(
-			req.files.image.tempFilePath,
-			"lostPets"
-		);
+	if (image) {
+		const result = await cloudinaryUpload(image, "lostPets");
 		infoToUpdate.image.public_id = result.public_id;
 		infoToUpdate.image.secure_url = result.secure_url;
 
 		const deletedImage = cloudinaryDestroy(adoptionPet.image.public_id);
-		fs.unlink(req.files.image.tempFilePath);
 	} else {
 		infoToUpdate.image.public_id = adoptionPet.image.public_id;
 		infoToUpdate.image.secure_url = adoptionPet.image.secure_url;

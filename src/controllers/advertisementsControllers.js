@@ -7,14 +7,14 @@ const {
 const fs = require("fs-extra");
 
 const postAdvertisement = asynchandler(async (req, res) => {
-	const { title, description } = req.body;
+	const { title, description, image } = req.body;
 
 	if (req.user.isAdmin == false) {
 		res.status(400);
 		throw new Error("Solo puede publicar un administrador");
 	}
 
-	if (!req.files?.image) {
+	if (!image) {
 		res.status(400);
 		throw new Error("Falta imagen");
 	}
@@ -24,10 +24,7 @@ const postAdvertisement = asynchandler(async (req, res) => {
 		throw new Error("Faltan datos");
 	}
 
-	const result = await cloudinaryUpload(
-		req.files.image.tempFilePath,
-		"advertisements"
-	);
+	const result = await cloudinaryUpload(image, "advertisements");
 
 	const advertisement = await Advertisement.create({
 		title,
@@ -36,7 +33,7 @@ const postAdvertisement = asynchandler(async (req, res) => {
 		description,
 	});
 
-	fs.unlink(req.files.image.tempFilePath);
+	// fs.unlink(req.files.image.tempFilePath);
 
 	res.status(201).json({
 		_id: advertisement.id,
