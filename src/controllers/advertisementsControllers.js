@@ -4,7 +4,6 @@ const {
 	cloudinaryUpload,
 	cloudinaryDestroy,
 } = require("../utils/cloudinaryMethods");
-const fs = require("fs-extra");
 
 const postAdvertisement = asynchandler(async (req, res) => {
 	const { title, description, image } = req.body;

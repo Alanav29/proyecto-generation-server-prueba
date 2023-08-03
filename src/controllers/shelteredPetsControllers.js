@@ -5,7 +5,6 @@ const {
 	cloudinaryDestroy,
 } = require("../utils/cloudinaryMethods");
 const CommentModel = require("../models/commentModel");
-const fs = require("fs-extra");
 
 const postShelteredPet = asyncHandler(async (req, res) => {
 	const { name, description, date_found, state_location, image } = req.body;

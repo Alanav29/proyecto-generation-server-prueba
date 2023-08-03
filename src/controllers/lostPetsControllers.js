@@ -4,7 +4,7 @@ const {
 	cloudinaryUpload,
 	cloudinaryDestroy,
 } = require("../utils/cloudinaryMethods");
-const fs = require("fs-extra");
+
 const User = require("../models/userModel");
 const CommentModel = require("../models/commentModel");
 
