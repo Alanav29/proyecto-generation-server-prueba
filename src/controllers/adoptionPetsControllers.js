@@ -4,7 +4,7 @@ const {
 	cloudinaryUpload,
 	cloudinaryDestroy,
 } = require("../utils/cloudinaryMethods");
-const fs = require("fs-extra");
+
 const CommentModel = require("../models/commentModel");
 
 const postAdoptionPet = asyncHandler(async (req, res) => {
