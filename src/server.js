@@ -21,8 +21,6 @@ app.use(
 	})
 );
 
-app.use("/", require("../src/googleb2b23709f55ddb33.html"));
-
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/lostPets", require("./routes/lostPetRoutes"));
 app.use("/api/adoptionPets", require("./routes/adoptionPetRoutes"));
