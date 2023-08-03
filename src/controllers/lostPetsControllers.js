@@ -9,9 +9,9 @@ const User = require("../models/userModel");
 const CommentModel = require("../models/commentModel");
 
 const postLostPet = asynchandler(async (req, res) => {
-	const { name, description, date_lost, user_id } = req.body;
+	const { name, description, date_lost, user_id, image } = req.body;
 
-	if (!req.files?.image) {
+	if (!image) {
 		res.status(400);
 		throw new Error("Falta imagen");
 	}
@@ -21,10 +21,7 @@ const postLostPet = asynchandler(async (req, res) => {
 		throw new Error("Faltan datos");
 	}
 
-	const result = await cloudinaryUpload(
-		req.files.image.tempFilePath,
-		"lostPets"
-	);
+	const result = await cloudinaryUpload(image, "lostPets");
 
 	const lostPet = await LostPet.create({
 		name,
@@ -39,12 +36,10 @@ const postLostPet = asynchandler(async (req, res) => {
 		name: lostPet.name,
 		user_id: lostPet.user_id,
 	});
-
-	fs.unlink(req.files.image.tempFilePath);
 });
 
 const getLostPets = asynchandler(async (req, res) => {
-	const lostPets = await LostPet.find();
+	const lostPets = await LostPet.find({ pet_status: false });
 
 	res.status(200).json(lostPets);
 });
@@ -77,7 +72,7 @@ const getLostPet = asynchandler(async (req, res) => {
 
 const putLostPet = asynchandler(async (req, res) => {
 	const lostPet = await LostPet.findById(req.params.id);
-	const { name, description, date_lost, pet_status } = req.body;
+	const { name, description, date_lost, pet_status, image } = req.body;
 	if (!lostPet) {
 		res.status(400);
 		throw new Error("La mascota no fué encontrada");
@@ -91,16 +86,13 @@ const putLostPet = asynchandler(async (req, res) => {
 		pet_status: undefined,
 	};
 
-	if (req.files?.image) {
-		const result = await cloudinaryUpload(
-			req.files.image.tempFilePath,
-			"lostPets"
-		);
+	if (image) {
+		const result = await cloudinaryUpload(image, "lostPets");
 		infoToUpdate.image.public_id = result.public_id;
 		infoToUpdate.image.secure_url = result.secure_url;
 
 		const deletedImage = cloudinaryDestroy(lostPet.image.public_id);
-		fs.unlink(req.files.image.tempFilePath);
+		// fs.unlink(req.files.image.tempFilePath);
 	} else {
 		infoToUpdate.image.public_id = lostPet.image.public_id;
 		infoToUpdate.image.secure_url = lostPet.image.secure_url;

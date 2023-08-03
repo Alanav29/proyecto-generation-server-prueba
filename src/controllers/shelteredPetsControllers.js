@@ -4,12 +4,13 @@ const {
 	cloudinaryUpload,
 	cloudinaryDestroy,
 } = require("../utils/cloudinaryMethods");
+const CommentModel = require("../models/commentModel");
 const fs = require("fs-extra");
 
 const postShelteredPet = asyncHandler(async (req, res) => {
-	const { name, description, date_found, state_location } = req.body;
+	const { name, description, date_found, state_location, image } = req.body;
 
-	if (!req.files?.image) {
+	if (!image) {
 		res.status(400);
 		throw new Error("Falta imagen");
 	}
@@ -20,10 +21,7 @@ const postShelteredPet = asyncHandler(async (req, res) => {
 	}
 
 	// se envia imagen a cludinary y se espera la respuesta
-	const result = await cloudinaryUpload(
-		req.files.image.tempFilePath,
-		"shelteredPets"
-	);
+	const result = await cloudinaryUpload(image, "shelteredPets");
 
 	// resul tendra un campo public_id que sera el id en cloudinary y otro secure_url
 	// que sera el endpoint de la imagen, posteriormente creamos la mascota usando estos
@@ -34,11 +32,7 @@ const postShelteredPet = asyncHandler(async (req, res) => {
 		date_found,
 		image: { public_id: result.public_id, secure_url: result.secure_url },
 		user_id: req.user.id,
-		state_location,
 	});
-
-	// se elimina la imagen que quedo temporalmente guardada en uploads
-	fs.unlink(req.files.image.tempFilePath);
 
 	//Esto es feedback para los desarrolladores
 	res.status(201).json({
@@ -57,7 +51,7 @@ const putShelteredPet = asyncHandler(async (req, res) => {
 	}
 
 	// se toman del body solo los campos que necesitamos
-	const { name, description, date_found, pet_status, state_location } =
+	const { name, description, date_found, pet_status, state_location, image } =
 		req.body;
 
 	// se crea objeto con info para actualizar la mascota que sera llenado con segun los
@@ -71,16 +65,12 @@ const putShelteredPet = asyncHandler(async (req, res) => {
 		state_location: undefined,
 	};
 
-	if (req.files?.image) {
-		const result = await cloudinaryUpload(
-			req.files.image.tempFilePath,
-			"shelteredPets"
-		);
+	if (image) {
+		const result = await cloudinaryUpload(image, "shelteredPets");
 		infoToUpdate.image.public_id = result.public_id;
 		infoToUpdate.image.secure_url = result.secure_url;
 
 		const deletedImage = cloudinaryDestroy(shelteredPet.image.public_id);
-		fs.unlink(req.files.image.tempFilePath);
 	} else {
 		infoToUpdate.image.public_id = shelteredPet.image.public_id;
 		infoToUpdate.image.secure_url = shelteredPet.image.secure_url;
@@ -126,27 +116,23 @@ const putShelteredPet = asyncHandler(async (req, res) => {
 
 const delShelteredPet = asyncHandler(async (req, res) => {
 	const shelteredPet = await ShelteredPet.findById(req.params.id);
+
 	if (!shelteredPet) {
 		res.status(400);
-		throw new Error("Cannot delete. Post not found.");
+		throw new Error("La mascota no fué encontrada");
 	}
 
-	cloudinaryDestroy(shelteredPet.image.public_id);
-	// se eliminan comentarios de la mascota
-	await CommentModel.deleteMany({ post: req.params.id });
-	await shelteredPet.deleteOne();
+	const deletedImage = cloudinaryDestroy(shelteredPet.image.public_id);
 
-	//Esto es feedback para los desarrolladores
-	res.status(200).json({
-		message: "The post has been succesfully deleted",
-		post_id: shelteredPet.id,
-		pet_name: shelteredPet.name,
-		user_name: req.user.name,
-	});
+	await CommentModel.deleteMany({ post: req.params.id });
+
+	shelteredPet.deleteOne();
+
+	res.status(200).json({ shelteredPet });
 });
 
 const getShelteredPets = asyncHandler(async (req, res) => {
-	const shelteredPets = await ShelteredPet.find();
+	const shelteredPets = await ShelteredPet.find({ pet_status: false });
 	if (!shelteredPets) {
 		res.status(400);
 		throw new Error("There are no pets sheltered");
