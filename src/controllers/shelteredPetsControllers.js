@@ -32,7 +32,6 @@ const postShelteredPet = asyncHandler(async (req, res) => {
 		date_found,
 		image: { public_id: result.public_id, secure_url: result.secure_url },
 		user_id: req.user.id,
-		state_location,
 	});
 
 	//Esto es feedback para los desarrolladores
@@ -133,7 +132,7 @@ const delShelteredPet = asyncHandler(async (req, res) => {
 });
 
 const getShelteredPets = asyncHandler(async (req, res) => {
-	const shelteredPets = await ShelteredPet.find();
+	const shelteredPets = await ShelteredPet.find({ pet_status: false });
 	if (!shelteredPets) {
 		res.status(400);
 		throw new Error("There are no pets sheltered");

@@ -101,7 +101,7 @@ const putAdoptionPet = asyncHandler(async (req, res) => {
 });
 
 const getAdoptionPets = asyncHandler(async (req, res) => {
-	const adoptionPets = await AdoptionPet.find();
+	const adoptionPets = await AdoptionPet.find({ pet_status: false });
 	if (!adoptionPets) {
 		res.status(400);
 		throw new Error("There are no pets for adoption.");

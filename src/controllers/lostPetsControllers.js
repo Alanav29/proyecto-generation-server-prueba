@@ -39,7 +39,7 @@ const postLostPet = asynchandler(async (req, res) => {
 });
 
 const getLostPets = asynchandler(async (req, res) => {
-	const lostPets = await LostPet.find();
+	const lostPets = await LostPet.find({ pet_status: false });
 
 	res.status(200).json(lostPets);
 });
