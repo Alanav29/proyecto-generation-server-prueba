@@ -5,6 +5,7 @@ const dotenv = require("dotenv").config();
 const { errorHandler } = require("./middleware/errorMiddleware");
 const port = process.env.PORT || 5000;
 const mongoose = require("mongoose");
+const multer = require("multer");
 
 const connectDB = async () => {
   try {
@@ -21,8 +22,11 @@ connectDB();
 const app = express();
 
 app.use(cors());
+const upload = multer();
+app.use(upload.array());
+
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: false }));
 
 app.use("/api/products", require("./routes/productRoutes"));
 

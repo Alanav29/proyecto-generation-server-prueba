@@ -66,9 +66,23 @@ const updateProduct = asyncHandler(async (req, res) => {
   res.status(200).json(productUpdated);
 });
 
+const delProduct = asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id);
+
+  if (!product) {
+    res.status(400);
+    throw new Error("El producto no fué encontrado");
+  }
+
+  product.deleteOne();
+
+  res.status(200).json({ product });
+});
+
 module.exports = {
   createProduct,
   productData,
   updateProduct,
   productsData,
+  delProduct,
 };
