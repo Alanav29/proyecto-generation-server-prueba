@@ -4,9 +4,9 @@ const Product = require("../models/productModel");
 const createProduct = asyncHandler(async (req, res) => {
   const { title, width, height, color, price, technique } = req.body;
 
-  if (!title || !width || !height || !color || !price || !technique) {
+  if (title === undefined) {
     res.status(400);
-    throw new Error("Faltan datos");
+    throw new Error(title);
   }
 
   const productExists = await Product.findOne({ title });
@@ -33,7 +33,13 @@ const createProduct = asyncHandler(async (req, res) => {
 });
 
 const productsData = asyncHandler(async (req, res) => {
-  const product = await Product.findOne({ _id: req.product._id });
+  const products = await Product.find();
+
+  res.status(200).json(products);
+});
+
+const productData = asyncHandler(async (req, res) => {
+  const product = await Product.findOne({ _id: req.params.id });
   if (!product) {
     res.status(400);
     throw new Error("Producto no encontrado");
@@ -62,6 +68,7 @@ const updateProduct = asyncHandler(async (req, res) => {
 
 module.exports = {
   createProduct,
-  productsData,
+  productData,
   updateProduct,
+  productsData,
 };
