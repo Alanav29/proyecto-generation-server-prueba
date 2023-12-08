@@ -4,9 +4,9 @@ const Product = require("../models/productModel");
 const createProduct = asyncHandler(async (req, res) => {
   const { title, width, height, color, price, technique } = req.body;
 
-  if (title === undefined) {
+  if (!title) {
     res.status(400);
-    throw new Error(title);
+    throw new Error("El título es obligatorio", req.body);
   }
 
   const productExists = await Product.findOne({ title });
@@ -49,13 +49,13 @@ const productData = asyncHandler(async (req, res) => {
 });
 
 const updateProduct = asyncHandler(async (req, res) => {
-  const product = await Product.findbyId(req.params.id);
+  const product = await Product.findById(req.params.id);
   if (!product) {
     res.status(400);
     throw new Error("Producto no encontrado");
   }
 
-  const productUpdated = await Product.findbyIdAndUpdate(
+  const productUpdated = await Product.findByIdAndUpdate(
     req.params.id,
     req.body,
     {
@@ -63,7 +63,7 @@ const updateProduct = asyncHandler(async (req, res) => {
     }
   );
 
-  res.status(200).json({ productUpdated });
+  res.status(200).json(productUpdated);
 });
 
 module.exports = {
