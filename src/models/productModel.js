@@ -26,6 +26,11 @@ const productSchema = mongoose.Schema(
       type: String,
       required: [true, "Por favor teclea el color"],
     },
+    img: {
+      type: String,
+      default:
+        "https://res.cloudinary.com/dtyazhppg/image/upload/v1702105674/generation/cuadro1Gaby_qt2d8k.jpg",
+    },
   },
   {
     timestamps: true,
