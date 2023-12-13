@@ -4,27 +4,27 @@ const productSchema = mongoose.Schema(
   {
     title: {
       type: String,
-      required: [true, "Por favor teclea el titulo"],
+      required: [true, "Por favor agrega el titulo"],
     },
     height: {
-      type: String,
-      required: [true, "Por favor teclea el alto"],
+      type: Number,
+      required: [true, "Por favor agrega el alto"],
     },
     price: {
-      type: String,
-      required: [true, "Por favor teclea el precio"],
+      type: Number,
+      required: [true, "Por favor agrega el precio"],
     },
     technique: {
       type: String,
-      required: [true, "Por favor teclea la tecnica"],
+      required: [true, "Por favor agrega la tecnica"],
     },
     color: {
       type: String,
-      required: [true, "Por favor teclea el color"],
+      required: [true, "Por favor agrega el color"],
     },
     width: {
-      type: String,
-      required: [true, "Por favor teclea el color"],
+      type: Number,
+      required: [true, "Por favor agrega el ancho"],
     },
     img: {
       type: String,

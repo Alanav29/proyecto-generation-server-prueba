@@ -3,7 +3,7 @@ const colors = require("colors");
 const cors = require("cors");
 const dotenv = require("dotenv").config();
 const { errorHandler } = require("./middleware/errorMiddleware");
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 8080;
 const mongoose = require("mongoose");
 const multer = require("multer");
 
