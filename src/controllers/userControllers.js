@@ -4,7 +4,7 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 
 const createUser = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, phoneNumber } = req.body;
 
   if (!name || !email || !password) {
     res.status(400);
@@ -23,6 +23,7 @@ const createUser = asyncHandler(async (req, res) => {
   const user = await User.create({
     name,
     email,
+    phoneNumber,
     password: hashedPassword,
   });
 
@@ -31,6 +32,7 @@ const createUser = asyncHandler(async (req, res) => {
       _id: user.id,
       name: user.name,
       email: user.email,
+      phoneNumber: user.phoneNumber,
     });
   } else {
     res.status(400);
@@ -48,6 +50,7 @@ const loginUser = asyncHandler(async (req, res) => {
       _id: user.id,
       name: user.name,
       email: user.email,
+      phoneNumber: user.phoneNumber,
       isAdmin: user.isAdmin,
       token: generateToken(user._id),
     });
