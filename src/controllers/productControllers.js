@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const Product = require("../models/productModel");
 
 const createProduct = asyncHandler(async (req, res) => {
-  const { title, width, height, color, price, technique } = req.body;
+  const { title, width, height, color, price, technique, img } = req.body;
 
   if (!title) {
     res.status(400);
@@ -22,6 +22,7 @@ const createProduct = asyncHandler(async (req, res) => {
     color,
     price,
     technique,
+    img,
   });
 
   if (product) {
