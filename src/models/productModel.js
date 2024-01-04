@@ -27,9 +27,8 @@ const productSchema = mongoose.Schema(
       required: [true, "Por favor agrega el ancho"],
     },
     img: {
-      type: String,
-      default:
-        "https://res.cloudinary.com/dtyazhppg/image/upload/v1702105674/generation/cuadro1Gaby_qt2d8k.jpg",
+      public_id: String,
+      secure_url: String,
     },
   },
   {

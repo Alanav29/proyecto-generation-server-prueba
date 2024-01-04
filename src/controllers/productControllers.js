@@ -1,36 +1,28 @@
 const asyncHandler = require("express-async-handler");
 const Product = require("../models/productModel");
+const { cloudinaryUpload } = require("../utils/cloudinaryMethods");
 
 const createProduct = asyncHandler(async (req, res) => {
-  const { title, width, height, color, price, technique, img } = req.body;
+  const { title, color, width, height, technique, price, img } = req.body;
 
-  if (!title) {
-    res.status(400);
-    throw new Error("El título es obligatorio", req.body);
-  }
-
-  const productExists = await Product.findOne({ title });
-  if (productExists) {
-    res.status(400);
-    throw new Error("Ese producto ya existe");
-  }
+  //Obtiene public_id y secure_url de cloudinary
+  const { public_id, secure_url } = await cloudinaryUpload(img, "ferro");
 
   const product = await Product.create({
     title,
-    width,
     height,
-    color,
     price,
     technique,
-    img,
+    color,
+    width,
+    img: { public_id, secure_url },
   });
 
-  if (product) {
-    res.status(201).json(product);
-  } else {
-    res.status(400);
-    throw new Error("Datos No Validos");
-  }
+  //Esto es feedback para los desarrolladores
+  res.status(201).json({
+    message: "Se creo correctamente el producto",
+    product: product,
+  });
 });
 
 const productsData = asyncHandler(async (req, res) => {

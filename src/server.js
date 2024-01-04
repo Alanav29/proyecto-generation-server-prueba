@@ -6,6 +6,7 @@ const { errorHandler } = require("./middleware/errorMiddleware");
 const port = process.env.PORT || 8080;
 const mongoose = require("mongoose");
 const multer = require("multer");
+const fileUpload = require("express-fileupload");
 
 const connectDB = async () => {
   try {
@@ -22,11 +23,14 @@ connectDB();
 const app = express();
 
 app.use(cors());
-const upload = multer();
-app.use(upload.array());
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb" }));
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: "./uploads",
+  })
+);
 
 app.use("/api/products", require("./routes/productRoutes"));
 app.use("/api/users", require("./routes/userRoutes"));
