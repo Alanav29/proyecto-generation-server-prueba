@@ -8,7 +8,12 @@ const {
 const createProduct = asyncHandler(async (req, res) => {
   const { title, color, width, height, technique, price, img } = req.body;
 
-  //Obtiene public_id y secure_url de cloudinary
+  const productExists = await Product.findOne({ title });
+  if (productExists) {
+    res.status(400);
+    throw new Error("Ese cuadro ya existe en la base de datos");
+  }
+
   const { public_id, secure_url } = await cloudinaryUpload(img, "ferro");
 
   const product = await Product.create({
