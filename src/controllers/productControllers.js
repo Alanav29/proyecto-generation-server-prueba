@@ -1,6 +1,9 @@
 const asyncHandler = require("express-async-handler");
 const Product = require("../models/productModel");
-const { cloudinaryUpload } = require("../utils/cloudinaryMethods");
+const {
+  cloudinaryUpload,
+  cloudinaryDestroy,
+} = require("../utils/cloudinaryMethods");
 
 const createProduct = asyncHandler(async (req, res) => {
   const { title, color, width, height, technique, price, img } = req.body;
@@ -48,19 +51,40 @@ const updateProduct = asyncHandler(async (req, res) => {
     throw new Error("Producto no encontrado");
   }
 
-  const productUpdated = await Product.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    {
-      new: true,
-    }
-  );
+  let dataToUpdate = req.body;
 
-  res.status(200).json(productUpdated);
+  if (dataToUpdate.img) {
+    const { public_id, secure_url } = await cloudinaryUpload(
+      req.body.img,
+      "ferro"
+    );
+    dataToUpdate.img = { public_id: public_id, secure_url: secure_url };
+    const productUpdated = await Product.findByIdAndUpdate(
+      req.params.id,
+      dataToUpdate,
+      {
+        new: true,
+      }
+    );
+
+    res.status(200).json(productUpdated);
+  } else {
+    const productUpdated = await Product.findByIdAndUpdate(
+      req.params.id,
+      dataToUpdate,
+      {
+        new: true,
+      }
+    );
+
+    res.status(200).json(productUpdated);
+  }
 });
 
 const delProduct = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
+
+  await cloudinaryDestroy(product.img.public_id);
 
   if (!product) {
     res.status(400);
